@@ -13,9 +13,9 @@
   <xacro:property name="axel_offset" value="0.05" /> <!-- Space btw top of beam and the each joint -->
 
   <!-- Import all Gazebo-customization elements, including Gazebo colors -->
-  <xacro:include filename="$(find rrbot_description)/urdf/rrbot.gazebo" />
+  <xacro:include filename="$(find rifo_gazebo)/urdf/rrbot.gazebo" />
   <!-- Import Rviz colors -->
-  <xacro:include filename="$(find rrbot_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find rifo_gazebo)/urdf/materials.xacro" />
 
   <!-- Used for fixing robot to Gazebo 'base_link' -->
   <link name="world"/>
@@ -94,7 +94,7 @@
     <parent link="link1"/>
     <child link="link2"/>
     <origin xyz="0 0 ${height1}" rpy="0 0 0"/>
-    <axis xyz="0 -1 0"/>
+    <axis xyz="0 1 0"/>
     <dynamics damping="0.7"/>
   </joint>
 
@@ -129,7 +129,7 @@
     <parent link="link2"/>
     <child link="link3"/>
     <origin xyz="0 0 ${height2}" rpy="0 0 0"/>
-    <axis xyz="0 -1 0"/>
+    <axis xyz="0 1 0"/>
     <dynamics damping="0.7"/>
   </joint>
 

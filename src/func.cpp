@@ -10,7 +10,6 @@ using Eigen::VectorXf;
 #define SAMPLING_TIME = 0.001
 
 float L1 = 0.5, L2 = 1, L3 = 1;
-// float L1 = 0.025, L2 = 0.35, L3 = 0.15;
 float th1_i, th2_i, th3_i, 
 	  th1, th2, th3,
 	  x, y, z;
@@ -87,13 +86,6 @@ void Forward_K(float th1, float th2, float th3)
 	}
 	
     cout << "Target Position Values :" << T(0,3) << T(1,3) << T(2,3) << '\n';
-
-	// Matrix4f H01 = Rz(th1) * Tz(L1) * Rx(PI/2) * Tx(0);
-	// Matrix4f H12 = Rz(th2 + PI/2) * Tz(0) * Rx(0) * Tx(L2);
-    // Matrix4f H23 = Rz(th3) * Tz(0) * Rx(0) * Tx(L3);
-    // Matrix4f H = H01 * H12 * H23;
-
-    // cout << "Target Position Values :" << H(0,3) << H(1,3) << H(2,3) << '\n';
 }
 
 void Inverse_K(float x, float y, float z, bool up_down)
@@ -113,11 +105,6 @@ void Inverse_K(float x, float y, float z, bool up_down)
         th2 = -(atan2(sqrt(pow(x,2) + pow(y,2)), z - L1) + th3/2);
 	}
     cout << ("Target Joint Values :", th1*180/PI, th2*180/PI, th3*180/PI) << '\n';
-}
-
-void Inverse_Newton()
-{
-	
 }
 
 // void PID_controller(const Ref<Vector3d> _TargetPos, const Ref<Vector3d> _CurrentPos, Ref<Vector3d> _PDtorque)

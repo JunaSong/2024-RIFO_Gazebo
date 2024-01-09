@@ -1,6 +1,6 @@
 add_compile_options(-std=c++11)
 cmake_minimum_required(VERSION 2.8.3)
-project(rrbot_control)
+project(rifo_gazebo)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
   # INCLUDE_DIRS include
-  LIBRARIES rrbot_control
+  LIBRARIES rifo_gazebo
   CATKIN_DEPENDS roscpp std_msgs message_runtime
   DEPENDS system_lib
 )

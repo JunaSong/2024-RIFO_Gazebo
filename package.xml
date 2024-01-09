@@ -1,18 +1,17 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>rrbot_control</name>
+  <name>rifo_gazebo</name>
   <version>0.0.0</version>
-  <description>The rrbot_control package</description>
+  <description>2024 Robotics Innovatory Freshman Orientaion package</description>
 
-  <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
+  <maintainer email="zcfilosvy522@gmail.com">Junha Song</maintainer>
 
   <license>BSD</license>
 
-  <url type="website">http://http://gazebosim.org/w/index.php?title=Tutorials/1.9/Using_A_URDF_In_Gazebo</url>
+  <!-- <url type="website">http://http://gazebosim.org/w/index.php?title=Tutorials/1.9/Using_A_URDF_In_Gazebo</url>
   <url type="bugtracker">https://github.com/osrf/gazebo_ros_demos/issues</url>
   <url type="repository">https://github.com/osrf/gazebo_ros_demos</url>
-
-  <author email="davetcoleman@gmail.com">Dave Coleman</author>
+  <author email="davetcoleman@gmail.com">Dave Coleman</author> -->
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>

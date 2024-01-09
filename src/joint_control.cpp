@@ -33,11 +33,11 @@ int main(int argc, char **argv){
 	ros::Rate loop_rate(100); 
 	ros::spinOnce();
 
-	cout << "Choose control mode (1: joint position / 2: EE pose) : " << '\n';
-	cin >> op_mode;
-
 	while(ros::ok())
 	{
+		cout << "Choose control mode ( 1: joint position / 2: EE pose ) : " << '\n';
+		cin >> op_mode;
+
 		if(op_mode == 1) // joint position input
 		{
 			cout << "Enter the target joint position : " << '\n';
