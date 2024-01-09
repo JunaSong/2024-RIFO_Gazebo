@@ -66,7 +66,7 @@ int main(int argc, char **argv){
 			}
 
 			try{
-				Inverse_K(x, y, z, up);
+				Inverse_K(x, y, z, up, th_cmd);
 			}
 			catch(...){
 				cout << "Out of Joint Configuration!" << '\n';
