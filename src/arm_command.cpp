@@ -65,7 +65,6 @@ int main(int argc, char **argv){
 		}
 		arm_command_pub.publish(joint_command_msg);
 
-        // cout << "Target Joint Values :" << th_cmd[0]*180/PI << '\t' << th_cmd[1]*180/PI << '\t' << th_cmd[2]*180/PI << '\n';
 		ros::spinOnce();
 	}
     return 0;

@@ -44,51 +44,6 @@ MatrixXf th_out = MatrixXf::Zero(1, DoF); // resize later
 
 
 //--------------Functions-------------------//
-// Matrix4f Rz(float th){
-// 	Matrix4f Rz_;
-// 	Rz_ << cos(th), -sin(th), 0, 0,
-//            sin(th), cos(th), 0, 0,
-//            0, 0, 1, 0,
-//            0, 0, 0, 1;
-// 	return Rz_;
-// }
-
-// Matrix4f Rx(float th){
-// 	Matrix4f Rx_;
-// 	Rx_ <<  1, 0, 0, 0,
-//         	0, cos(th), -sin(th), 0,
-//             0, sin(th), cos(th), 0,
-//             0, 0, 0, 1;
-// 	return Rx_;
-// }
-
-// Matrix4f Tx(float a){
-// 	Matrix4f Tx_;
-// 	Tx_ <<  1, 0, 0, a,
-//         	0, 1, 0, 0,
-//             0, 0, 1, 0,
-//             0, 0, 0, 1;
-// 	return Tx_;
-// }
-
-// Matrix4f Tz(float d){
-// 	Matrix4f Tz_;
-// 	Tz_ <<  1, 0, 0, 0,
-//         	0, 1, 0, 0,
-//             0, 0, 1, d,
-//             0, 0, 0, 1;
-// 	return Tz_;
-// }
-
-// Matrix4d T_cor(float th, float d, float al, float a){
-// 	Matrix4d T_cor_;
-// 	T_cor_ <<  cos(th), -cos(al)*sin(th), sin(al)*sin(th), a*cos(th),
-//         	   sin(th), cos(al)*cos(th), -sin(al)*cos(th), a*sin(th),
-//                0, sin(al), cos(al), d,
-//                0, 0, 0, 1;
-// 	return T_cor_;
-// }
-
 Matrix4d T_craig(float th, float d, float al, float a)
 {
 	Matrix4d T_craig_;
@@ -107,10 +62,6 @@ void Forward_K(double* th, MatrixXd& T)
 	double th3 = th[2];
 
 	Vector4f theta, d, a, alpha;
-	// theta << th1, th2 + PI/2, th3;
-	// d << L1, 0, 0;
-	// alpha << PI/2, 0, 0;
-	// a << 0, L2, L3;
 	theta << th1, th2 - PI/2, th3, 0;
 	d << L1, 0, 0, 0;
 	alpha << 0, -PI/2, 0, 0;
@@ -121,9 +72,7 @@ void Forward_K(double* th, MatrixXd& T)
 	for (int i = 0; i < DoF + 1; i++)
 	{
 		T *= T_craig(theta(i), d(i), alpha(i), a(i));
-	}
-	
-    // cout << "Target Position Values :" << T(0,3) << T(1,3) << T(2,3) << '\n';
+	}	
 }
 
 void Inverse_K(float x, float y, float z, bool up_down, double* th_out)
@@ -136,14 +85,6 @@ void Inverse_K(float x, float y, float z, bool up_down, double* th_out)
 	
 	float Ld = sqrt(pow(x,2) + pow(y,2) + pow(z - L1,2));
 
-	// if(up_down){
-	// 	th3 = -(PI - acos((pow(L2,2) + pow(L2,2) - pow(Ld,2)) / (2*L2*L3)));
-	// 	th2 = -(atan2(sqrt(pow(x,2) + pow(y,2)), z - L1) + th3/2);
-	// }
-	// else{
-	// 	th3 = PI - acos((pow(L2,2) + pow(L3,2) - pow(Ld,2)) / (2*L2*L3));
-    //     th2 = -(atan2(sqrt(pow(x,2) + pow(y,2)), z - L1) + th3/2);
-	// }
 	if(up_down){
 		th3 = acos( (pow(Ld,2) - pow(L2,2) - pow(L3,2)) / (2*L2*L3) );
 		th2 = atan2( sqrt(pow(x,2) + pow(y,2)), z - L1 ) - th3 / 2;

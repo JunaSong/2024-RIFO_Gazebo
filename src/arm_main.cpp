@@ -42,35 +42,26 @@ int main(int argc, char **argv){
 	{
         Forward_K(th_act, T03);
 
-		if(cmd_mode == 0) // Default mode
+        if(traj_init == true) // set when cmd angle come in, trajectory generated
+        {
+            for(int i = 0; i < DoF; i++) {
+                th_ini[i] = th_act[i];
+            }
+            Traj_joint(th_ini, th_cmd, th_out);
+            traj_cnt = 0;
+            traj_init = false;
+        }
+        else if(traj_cnt < th_out.rows()) // this portion must not run when no cmd
+        {
+            for (int i = 0; i < DoF; i++){
+                TargetPos[i] = th_out(traj_cnt, i);
+            }
+            traj_cnt++;
+        }
+        else
         {
             for (int i = 0; i < DoF; i++) {
                 TargetPos[i] = th_cmd[i];
-            }
-        }
-        else if(cmd_mode == 1)  // cmd angle mode
-        {
-            if(traj_init == true) // set when cmd angle come in, trajectory generated
-            {
-                for(int i = 0; i < DoF; i++) {
-                    th_ini[i] = th_act[i];
-                }
-                Traj_joint(th_ini, th_cmd, th_out);
-                traj_cnt = 0;
-                traj_init = false;
-            }
-            else if(traj_cnt < th_out.rows()) // this portion must not run when no cmd
-            {
-                for (int i = 0; i < DoF; i++){
-                    TargetPos[i] = th_out(traj_cnt, i);
-                }
-                traj_cnt++;
-            }
-            else
-            {
-                for (int i = 0; i < DoF; i++) {
-                    TargetPos[i] = th_cmd[i];
-                }
             }
         }
 
