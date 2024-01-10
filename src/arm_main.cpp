@@ -1,17 +1,7 @@
-#include <iostream>
-#include "ros/ros.h"
-#include <eigen3/Eigen/Dense>
-//--------------------MSG------------------------//
-#include <sensor_msgs/JointState.h>
-#include <std_msgs/Float64.h>
-#include <std_msgs/Float32MultiArray.h>
-#include <std_msgs/Float64MultiArray.h>
 #include "func.cpp"
 
 using namespace std;
 using namespace Eigen;
-
-int op_mode;
 
 void msgCallbackP(const sensor_msgs::JointState::ConstPtr& msg)
 {
@@ -38,11 +28,11 @@ int main(int argc, char **argv){
 	ros::Publisher joint1_pub = nh.advertise<std_msgs::Float64>("/rrbot/joint1_position_controller/command", 10);
 	ros::Publisher joint2_pub = nh.advertise<std_msgs::Float64>("/rrbot/joint2_position_controller/command", 10);
 	ros::Publisher joint3_pub = nh.advertise<std_msgs::Float64>("/rrbot/joint3_position_controller/command", 10);
-	ros::Publisher torque_pub = nh.advertise<std_msgs::Float64MultiArray>("Torque",10);
+	// ros::Publisher torque_pub = nh.advertise<std_msgs::Float64MultiArray>("Torque",10);
 	ros::Subscriber sub_joint_angle = nh.subscribe("/rrbot/joint_states", 100, msgCallbackP);
-    ros::Subscriber sub_joint_cmd = nh.subscribe("/rrbot/ArmCmd_sim", 100, msgCallbackArmCmd_sim);
+    ros::Subscriber sub_joint_cmd = nh.subscribe("/rrbot/ArmCmd", 100, msgCallbackArmCmd_sim);
 
-	ros::Rate loop_rate(100); 
+	ros::Rate loop_rate(1000);
 	ros::spinOnce();
 
     // messages
@@ -50,13 +40,14 @@ int main(int argc, char **argv){
 
 	while(ros::ok())
 	{
+        Forward_K(th_act, T03);
+
 		if(cmd_mode == 0) // Default mode
         {
             for (int i = 0; i < DoF; i++) {
                 TargetPos[i] = th_cmd[i];
             }
         }
-
         else if(cmd_mode == 1)  // cmd angle mode
         {
             if(traj_init == true) // set when cmd angle come in, trajectory generated
@@ -68,20 +59,22 @@ int main(int argc, char **argv){
                 traj_cnt = 0;
                 traj_init = false;
             }
+            else if(traj_cnt < th_out.rows()) // this portion must not run when no cmd
+            {
+                for (int i = 0; i < DoF; i++){
+                    TargetPos[i] = th_out(traj_cnt, i);
+                }
+                traj_cnt++;
+            }
             else
             {
-				if(traj_cnt < th_out.rows()) // this portion must not run when no cmd
-				{
-					for (int i = 0; i < DoF; i++){
-						TargetPos[i] = th_out(traj_cnt, i);
-					}
-					traj_cnt++;
-				}
+                for (int i = 0; i < DoF; i++) {
+                    TargetPos[i] = th_cmd[i];
+                }
             }
         }
 
         // PID_controller(TargetPos, th_act, TargetTor);
-
         // torque_msg.data.clear();
         // for (int i = 0; i < DoF; i++){
         //     torque_msg.data.push_back(TargetTor[i]);
@@ -100,6 +93,12 @@ int main(int argc, char **argv){
             joint3_pub.publish(joint3_msg);
         }
 
+        cout.precision(3);
+        cout << "Target Joint / Pose :" << TargetPos[0]*180/PI << setw(6) << TargetPos[1]*180/PI << setw(6) << TargetPos[2]*180/PI << "  /  ";
+        cout << T03(0,3) << setw(6) << T03(1,3) << setw(6) << T03(2,3) << '\n';
+
+        loop_rate.sleep();
         ros::spinOnce();
 	}
+    return 0;
 }

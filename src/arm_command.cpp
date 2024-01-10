@@ -1,11 +1,3 @@
-#include <iostream>
-#include "ros/ros.h"
-#include <eigen3/Eigen/Dense>
-//--------------------MSG------------------------//
-#include <sensor_msgs/JointState.h>
-#include <std_msgs/Float64.h>
-#include <std_msgs/Float32MultiArray.h>
-#include <std_msgs/Float64MultiArray.h>
 #include "func.cpp"
 
 using namespace std;
@@ -17,8 +9,7 @@ int main(int argc, char **argv){
 	ros::init(argc, argv, "jointcmd_publishing_node");
 	ros::NodeHandle nh;
 
-	ros::Publisher arm_command_pub = nh.advertise<std_msgs::Float32MultiArray>("/rrbot/ArmCmd_sim",100);
-	ros::Publisher torque_pub = nh.advertise<std_msgs::Float64MultiArray>("Torque",10);
+	ros::Publisher arm_command_pub = nh.advertise<std_msgs::Float32MultiArray>("/rrbot/ArmCmd",100);
 
 	std_msgs::Float32MultiArray joint_command_msg;
 
@@ -45,11 +36,11 @@ int main(int argc, char **argv){
 		else if(op_mode == 2) // EE pose input
 		{
 			char s;
-			cout << "Enter the target position and the solution type (U for upper, L for lower) : " << '\n';
+			cout << "Enter the target position and the solution type (u for upper, l for lower) : " << '\n';
 			cin >> x >> y >> z >> s;
-			if(s == 'U')
+			if(s == 'u')
 				up = true;
-			else if(s == 'L')
+			else if(s == 'l')
 				up = false;
 			else{
 				cout << "Wrong solution! Type it again." << '\n';
@@ -74,8 +65,8 @@ int main(int argc, char **argv){
 		}
 		arm_command_pub.publish(joint_command_msg);
 
-        cout << ("Target Joint Values :", th_cmd[0]*180/PI, th_cmd[1]*180/PI, th_cmd[2]*180/PI) << '\n';
-
+        // cout << "Target Joint Values :" << th_cmd[0]*180/PI << '\t' << th_cmd[1]*180/PI << '\t' << th_cmd[2]*180/PI << '\n';
 		ros::spinOnce();
 	}
+    return 0;
 }
