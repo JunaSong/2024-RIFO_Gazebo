@@ -1,4 +1,4 @@
-2024 Robotics Innovatory Freshman Orientation
+## 2024 Robotics Innovatory Freshman Orientation
 
 ## Quick Start
 
