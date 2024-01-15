@@ -1,32 +1,34 @@
-add_compile_options(-std=c++11)
-cmake_minimum_required(VERSION 2.8.3)
-project(rifo_gazebo)
+cmake_minimum_required(VERSION 3.5)
+project(rifo_gazebo2)
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  std_msgs
-  message_generation
-)
+if(NOT CMAKE_CXX_STANDARD)
+set(CMAKE_CXX_STANDARD 14)
+endif()
 
-catkin_package(
-  # INCLUDE_DIRS include
-  LIBRARIES rifo_gazebo
-  CATKIN_DEPENDS roscpp std_msgs message_runtime
-  DEPENDS system_lib
-)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+# find_package(message_generation REQUIRED)
 
 include_directories(
     include
-    ${catkin_INCLUDE_DIRS}   
-    ./include
-    ./src
+    ${ament_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 add_executable(rrbot_command src/arm_command.cpp)
-add_dependencies(rrbot_command ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(rrbot_command ${catkin_LIBRARIES})
+ament_target_dependencies(rrbot_command rclcpp std_msgs)
+target_link_libraries(rrbot_command ${ament_LIBRARIES})
 
 add_executable(arm_main src/arm_main.cpp)
-add_dependencies(arm_main ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(arm_main ${catkin_LIBRARIES})
+ament_target_dependencies(arm_main rclcpp std_msgs)
+target_link_libraries(arm_main ${ament_LIBRARIES})
+
+install(TARGETS
+  rrbot_command
+  arm_main
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+ament_package()

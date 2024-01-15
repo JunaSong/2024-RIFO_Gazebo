@@ -1,25 +1,24 @@
-#include "func.cpp"
+#include "func.cpp" 
 
 using namespace std;
 using namespace Eigen;
 
 int op_mode;
 
-int main(int argc, char **argv){
-	ros::init(argc, argv, "jointcmd_publishing_node");
-	ros::NodeHandle nh;
+int main(int argc, char **argv) {
+    rclcpp::init(argc, argv);
+    auto node = rclcpp::Node::make_shared("jointcmd_publishing_node");
 
-	ros::Publisher arm_command_pub = nh.advertise<std_msgs::Float32MultiArray>("/rrbot/ArmCmd",100);
+    auto arm_command_pub = node->create_publisher<std_msgs::msg::float32_multi_array>("/rrbot/ArmCmd", 100);
 
-	std_msgs::Float32MultiArray joint_command_msg;
+    std_msgs::msg::float32_multi_array joint_command_msg;
 
-	ros::Rate loop_rate(100);
-	ros::spinOnce();
+    rclcpp::Rate loop_rate(100);
+    rclcpp::spin_some(node);
 
-	while(ros::ok())
-	{
-		cout << "Choose control mode ( 1: joint position / 2: EE pose ) : " << '\n';
-		cin >> op_mode;
+    while (rclcpp::ok()) {
+        cout << "Choose control mode (1: joint position / 2: EE pose): " << '\n';
+        cin >> op_mode;
 
 		if(op_mode == 1) // joint position input
 		{
@@ -60,12 +59,14 @@ int main(int argc, char **argv){
 		}
 
         joint_command_msg.data.clear();
-		for(int i = 0; i < DoF; i++) {
-			joint_command_msg.data.push_back(th_cmd[i]);
-		}
-		arm_command_pub.publish(joint_command_msg);
+        for (int i = 0; i < DoF; i++) {
+            joint_command_msg.data.push_back(th_cmd[i]);
+        }
+        arm_command_pub->publish(joint_command_msg);
 
-		ros::spinOnce();
-	}
+        rclcpp::spin_some(node);
+        loop_rate.sleep();
+    }
+
     return 0;
 }
