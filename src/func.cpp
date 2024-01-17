@@ -1,6 +1,11 @@
 #include <iostream>
 #include "rclcpp/rclcpp.hpp"
+#include <chrono>
+#include <functional>
+#include <memory>
+
 #include <eigen3/Eigen/Dense>
+
 //--------------------MSG------------------------//
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "std_msgs/msg/float64.hpp"

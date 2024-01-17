@@ -1,17 +1,16 @@
 #include "func.cpp"
-#include <chrono>
-#include <memory>
-
 
 using namespace std;
 using namespace Eigen;
+using namespace std::chrono_literals;
 
 int op_mode;
 
 class JointCommandPublisher : public rclcpp::Node
 {
 public:
-    JointCommandPublisher() : Node("jointcmd_publishing_node")
+    JointCommandPublisher()
+    : Node("jointcmd_publishing_node")
     {
         arm_command_pub = this->create_publisher<std_msgs::msg::Float32MultiArray>("/rrbot/ArmCmd", 100);
 
@@ -25,7 +24,7 @@ public:
 
         // initialize variables
         op_mode = 0;
-        th1 = th2 = th3 = x = y = z = 0.0;
+        th1 = 0.0; th2 = 0.0; th3 = 0.0; x = 0.0; y = 0.0; z = 0.0;
         up = false;
         for (int i = 0; i < DoF; ++i)
         {
