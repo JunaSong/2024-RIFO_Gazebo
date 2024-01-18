@@ -5,11 +5,11 @@
   <!-- Constants for robot dimensions -->
   <xacro:property name="PI" value="3.1415926535897931"/>
   <xacro:property name="mass" value="1" /> <!-- arbitrary value for mass -->
-  <xacro:property name="width" value="0.1" /> <!-- Square dimensions (widthxwidth) of beams -->
-  <xacro:property name="height1" value="0.25" /> <!-- Link 1 -->
-  <xacro:property name="height2" value="1" /> <!-- Link 2 -->
-  <xacro:property name="height3" value="1" /> <!-- Link 3 -->
-  <xacro:property name="camera_link" value="0.05" /> <!-- Size of square 'camera' box -->
+  <xacro:property name="r" value="0.05" /> <!-- Circle dimensions (PI*radius^2) of Rods -->
+  <xacro:property name="l1" value="0.25" /> <!-- Link 1 -->
+  <xacro:property name="l2" value="1" /> <!-- Link 2 -->
+  <xacro:property name="l3" value="1" /> <!-- Link 3 -->
+  <xacro:property name="camera_link" value="0.05" /> <!-- Size of square 'camera' cylinder -->
   <xacro:property name="axel_offset" value="0.05" /> <!-- Space btw top of beam and the each joint -->
 
   <!-- Import all Gazebo-customization elements, including Gazebo colors -->
@@ -32,68 +32,68 @@
 
   <link name="base">
     <collision>
-      <origin xyz="0 0 ${height1/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${l1/2}" rpy="0 0 0"/>
       <geometry>
-	      <box size="${width} ${width} ${height1}"/>
+	      <cylinder length="${l1}" radius="${r}"/>
       </geometry>
     </collision>
 
     <visual>
-      <origin xyz="0 0 ${height1/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${l1/2}" rpy="0 0 0"/>
       <geometry>
-        <box size="${width} ${width} ${height1}"/>
+        <cylinder length="${l1}" radius="${r}"/>
       </geometry>
       <material name="orange"/>
     </visual>
 
     <inertial>
-      <origin xyz="0 0 ${height1/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${l1/2}" rpy="0 0 0"/>
       <mass value="${mass}"/>
       <inertia
-        ixx="${mass / 12.0 * (width*width + height1*height1)}" ixy="0.0" ixz="0.0"
-        iyy="${mass / 12.0 * (height1*height1 + width*width)}" iyz="0.0"
-        izz="${mass / 12.0 * (width*width + width*width)}"/>
+	  ixx="${mass / 12.0 * (3*r*r + l1*l1)}" ixy="0.0" ixz="0.0"
+	  iyy="${mass / 12.0 * (l1*l1 + 3*r*r)}" iyz="0.0"
+	  izz="${mass / 12.0 * (3*r*r)}"/>
     </inertial>
   </link>
 
   <joint name="joint1" type="continuous">
     <parent link="base"/>
     <child link="link1"/>
-    <origin xyz="0 0 ${height1}" rpy="0 0 0"/>
+    <origin xyz="0 0 ${l1}" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
     <dynamics damping="0.7"/>
   </joint>
 
   <link name="link1">
     <collision>
-      <origin xyz="0 0 ${height1/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${l1/2}" rpy="0 0 0"/>
       <geometry>
-	      <box size="${width} ${width} ${height1}"/>
+	      <cylinder length="${l1}" radius="${r}"/>
       </geometry>
     </collision>
 
     <visual>
-      <origin xyz="0 0 ${height1/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${l1/2}" rpy="0 0 0"/>
       <geometry>
-	      <box size="${width} ${width} ${height1}"/>
+	      <cylinder length="${l1}" radius="${r}"/>
       </geometry>
       <material name="orange"/>
     </visual>
 
     <inertial>
-      <origin xyz="0 0 ${height1/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${l1/2}" rpy="0 0 0"/>
       <mass value="${mass}"/>
       <inertia
-	  ixx="${mass / 12.0 * (width*width + height1*height1)}" ixy="0.0" ixz="0.0"
-	  iyy="${mass / 12.0 * (height1*height1 + width*width)}" iyz="0.0"
-	  izz="${mass / 12.0 * (width*width + width*width)}"/>
+	  ixx="${mass / 12.0 * (3*r*r + l1*l1)}" ixy="0.0" ixz="0.0"
+	  iyy="${mass / 12.0 * (l1*l1 + 3*r*r)}" iyz="0.0"
+	  izz="${mass / 12.0 * (3*r*r)}"/>
     </inertial>
   </link>
 
   <joint name="joint2" type="continuous">
     <parent link="link1"/>
     <child link="link2"/>
-    <origin xyz="0 0 ${height1}" rpy="0 0 0"/>
+    <origin xyz="0 0 ${l1}" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
     <dynamics damping="0.7"/>
   </joint>
@@ -101,34 +101,34 @@
   <!-- Middle Link -->
   <link name="link2">
     <collision>
-      <origin xyz="0 0 ${height2/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${l2/2}" rpy="0 0 0"/>
       <geometry>
-	<box size="${width} ${width} ${height2}"/>
+	<cylinder length="${l2}" radius="${r}"/>
       </geometry>
     </collision>
 
     <visual>
-      <origin xyz="0 0 ${height2/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${l2/2}" rpy="0 0 0"/>
       <geometry>
-	<box size="${width} ${width} ${height2}"/>
+	<cylinder length="${l2}" radius="${r}"/>
       </geometry>
       <material name="black"/>
     </visual>
 
     <inertial>
-      <origin xyz="0 0 ${height2/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${l2/2}" rpy="0 0 0"/>
       <mass value="${mass}"/>
       <inertia
-	  ixx="${mass / 12.0 * (width*width + height2*height2)}" ixy="0.0" ixz="0.0"
-	  iyy="${mass / 12.0 * (height2*height2 + width*width)}" iyz="0.0"
-	  izz="${mass / 12.0 * (width*width + width*width)}"/>
+	  ixx="${mass / 12.0 * (3*r*r + l2*l2)}" ixy="0.0" ixz="0.0"
+	  iyy="${mass / 12.0 * (l2*l2 + 3*r*r)}" iyz="0.0"
+	  izz="${mass / 12.0 * (3*r*r)}"/>
     </inertial>
   </link>
 
   <joint name="joint3" type="continuous">
     <parent link="link2"/>
     <child link="link3"/>
-    <origin xyz="0 0 ${height2}" rpy="0 0 0"/>
+    <origin xyz="0 0 ${l2}" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
     <dynamics damping="0.7"/>
   </joint>
@@ -136,48 +136,49 @@
   <!-- Top Link -->
   <link name="link3">
     <collision>
-      <origin xyz="0 0 ${height3/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${l3/2}" rpy="0 0 0"/>
       <geometry>
-	<box size="${width} ${width} ${height3}"/>
+	<cylinder length="${l3}" radius="${r}"/>
       </geometry>
     </collision>
 
     <visual>
-      <origin xyz="0 0 ${height3/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${l3/2}" rpy="0 0 0"/>
       <geometry>
-	<box size="${width} ${width} ${height3}"/>
+	<cylinder length="${l3}" radius="${r}"/>
       </geometry>
       <material name="orange"/>
     </visual>
 
     <inertial>
-      <origin xyz="0 0 ${height3/2}" rpy="0 0 0"/>
+      <origin xyz="0 0 ${l3/2}" rpy="0 0 0"/>
       <mass value="${mass}"/>
       <inertia
-	  ixx="${mass / 12.0 * (width*width + height3*height3)}" ixy="0.0" ixz="0.0"
-	  iyy="${mass / 12.0 * (height3*height3 + width*width)}" iyz="0.0"
-	  izz="${mass / 12.0 * (width*width + width*width)}"/>
+	  ixx="${mass / 12.0 * (3*r*r + l3*l3)}" ixy="0.0" ixz="0.0"
+	  iyy="${mass / 12.0 * (l3*l3 + 3*r*r)}" iyz="0.0"
+	  izz="${mass / 12.0 * (3*r*r)}"/>
     </inertial>
   </link>
 
   <joint name="end_effector_fixed" type="fixed">
     <parent link="link3"/>
     <child link="end_effector"/>
-    <origin xyz="0 0 ${height2}" rpy="0 0 0"/>
+    <origin xyz="0 0 ${l2}" rpy="0 0 0"/>
   </joint>
 
+<!-- End_effector -->
   <link name="end_effector">
     <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0.5 0.125" rpy="0 0 0"/>
       <geometry>
-	      <box size="0 0 0"/>
+	      <box size="0.25 0.25 0.25"/>
       </geometry>
     </collision>
 
     <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0.5 0.125" rpy="0 0 0"/>
       <geometry>
-	      <box size="0 0 0"/>
+	      <box size="0.25 0.25 0.25"/>
       </geometry>
       <material name="orange"/>
     </visual>
@@ -186,9 +187,9 @@
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <mass value="0"/>
       <inertia
-	  ixx="0" ixy="0.0" ixz="0.0"
-	  iyy="0" iyz="0.0"
-	  izz="0"/>
+	  ixx="0.01" ixy="0.0" ixz="0.0"
+	  iyy="0.01" iyz="0.0"
+	  izz="0.01"/>
     </inertial>
   </link>
 

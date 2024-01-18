@@ -12,5 +12,6 @@
         "complex": "cpp",
         "eigen": "cpp",
         "iostream": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": true
 }
