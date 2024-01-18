@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include "rclcpp/rclcpp.hpp"
 #include <chrono>
 #include <functional>
@@ -25,6 +26,7 @@ int cmd_mode = 1;
 double th_act[DoF] = {0,};
 double th_ini[DoF] = {0,};
 double th_cmd[DoF] = {0,};
+double th_sub[DoF] = {0,};
 MatrixXd T03 = MatrixXd::Identity(4, 4);
 
 bool first_callback = true, up = true;

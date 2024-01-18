@@ -2,6 +2,8 @@
 
 using namespace std;
 using namespace Eigen;
+using namespace std::chrono_literals;
+using std::placeholders::_1;
 
 class JointPublishingNode : public rclcpp::Node
 {
@@ -12,27 +14,16 @@ public:
         joint2_pub = this->create_publisher<std_msgs::msg::Float64>("/rrbot/joint2_position_controller/command", 10);
         joint3_pub = this->create_publisher<std_msgs::msg::Float64>("/rrbot/joint3_position_controller/command", 10);
 
-        sub_joint_angle = this->create_subscription<sensor_msgs::msg::JointState>(
-            "/rrbot/joint_states", 100, std::bind(&JointPublishingNode::msgCallbackP, this, std::placeholders::_1));
+        // sub_joint_angle = this->create_subscription<sensor_msgs::msg::JointState>(
+        //     "/rrbot/joint_states", 100, std::bind(&JointPublishingNode::msgCallbackP, this, std::placeholders::_1));
 
         sub_joint_cmd = this->create_subscription<std_msgs::msg::Float32MultiArray>(
-            "/rrbot/ArmCmd", 100, std::bind(&JointPublishingNode::msgCallbackArmCmd_sim, this, std::placeholders::_1));
+            "/rrbot/ArmCmd", 100, std::bind(&JointPublishingNode::msgCallbackArmCmd_sim, this, _1));
 
-        // messages
-        joint1_msg = std_msgs::msg::Float64();
-        joint2_msg = std_msgs::msg::Float64();
-        joint3_msg = std_msgs::msg::Float64();
+        timer_ = this->create_wall_timer(10ms, std::bind(&JointPublishingNode::run, this));
     }
 
 private:
-    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr joint1_pub;
-    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr joint2_pub;
-    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr joint3_pub;
-    rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_joint_angle;
-    rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr sub_joint_cmd;
-
-    std_msgs::msg::Float64 joint1_msg, joint2_msg, joint3_msg;
-
     void msgCallbackP(const sensor_msgs::msg::JointState::SharedPtr msg)
     {
         for (int i = 0; i < DoF; i++)
@@ -46,13 +37,17 @@ private:
     {
         for (int i = 0; i < DoF; i++)
         {
-            th_cmd[i] = msg->data[i];
+            th_sub[i] = msg->data[i];
         }
         traj_init = true;
     }
 
     void run()
     {
+        auto joint1_msg = std_msgs::msg::Float64();
+        auto joint2_msg = std_msgs::msg::Float64();
+        auto joint3_msg = std_msgs::msg::Float64();
+
         while (rclcpp::ok())
         {
             Forward_K(th_act, T03);
@@ -63,7 +58,7 @@ private:
                 {
                     th_ini[i] = th_act[i];
                 }
-                Traj_joint(th_ini, th_cmd, th_out);
+                Traj_joint(th_ini, th_sub, th_out);
                 traj_cnt = 0;
                 traj_init = false;
             }
@@ -79,7 +74,7 @@ private:
             {
                 for (int i = 0; i < DoF; i++)
                 {
-                    TargetPos[i] = th_cmd[i];
+                    TargetPos[i] = th_sub[i];
                 }
             }
 
@@ -91,7 +86,8 @@ private:
 
             // torque_pub.publish(torque_msg);
 
-            if (first_callback == true)
+            // if (first_callback == true)
+            if(1)
             {
                 joint1_msg.data = TargetPos[0];
                 joint2_msg.data = TargetPos[1];
@@ -105,17 +101,24 @@ private:
             cout.precision(3);
             // cout << "Target Joint / Pose :" << TargetPos[0] * 180 / PI << setw(6) << TargetPos[1] * 180 / PI << setw(6) << TargetPos[2] * 180 / PI << "  /  ";
             // cout << T03(0, 3) << setw(6) << T03(1, 3) << setw(6) << T03(2, 3) << '\n';
-
-            rclcpp::spin_some(this->get_node_base_interface());
+            // cout << th_sub[0] << setw(6) << th_sub[1] << setw(6) << th_sub[2] << '\n';
         }
     }
+
+    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr joint1_pub;
+    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr joint2_pub;
+    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr joint3_pub;
+    rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_joint_angle;
+    rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr sub_joint_cmd;
+
+    rclcpp::TimerBase::SharedPtr timer_;
 };
 
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
     auto node = std::make_shared<JointPublishingNode>();
-    // node->run();
+    rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;
 }
