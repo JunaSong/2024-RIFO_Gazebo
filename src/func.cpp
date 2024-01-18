@@ -18,7 +18,7 @@ using namespace Eigen;
 using Eigen::VectorXf;
 
 #define PI 3.14159
-#define SAMPLING_TIME 0.001
+#define SAMPLING_TIME 0.01
 #define DoF 3
 
 //--------------Command-------------------//

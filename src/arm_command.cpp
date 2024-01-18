@@ -7,7 +7,7 @@ public:
     : Node("jointcmd_publishing_node") //, op_mode(0)
     {
         // Create a publisher on the "/rrbot/ArmCmd" topic
-        arm_command_pub = this->create_publisher<std_msgs::msg::Float32MultiArray>("/rrbot/ArmCmd", 10);
+        arm_command_pub = this->create_publisher<std_msgs::msg::Float32MultiArray>("/rrbot/ArmCmd", 100);
 
         // Create a timer to publish the number every 1 second
         timer_ = this->create_wall_timer(std::chrono::seconds(1), std::bind(&JointCommandPublisher::getJointCmdInput, this));
