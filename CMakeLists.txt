@@ -27,10 +27,31 @@ ament_target_dependencies(arm_command rclcpp std_msgs)
 add_executable(arm_main src/arm_main.cpp)
 ament_target_dependencies(arm_main rclcpp std_msgs)
 
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  # the following line skips the linter which checks for copyrights
+  # uncomment the line when a copyright and license is not present in all source files
+  set(ament_cmake_copyright_FOUND TRUE)
+  # the following line skips cpplint (only works in a git repo)
+  # uncomment the line when this package is not in a git repo
+  set(ament_cmake_cpplint_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
 install(TARGETS
   arm_command
   arm_main
+  
   DESTINATION lib/${PROJECT_NAME}
+)
+install(
+  DIRECTORY launch
+  DESTINATION share/rifo_gazebo2
+)
+
+install(
+  DIRECTORY urdf
+  DESTINATION share/rifo_gazebo2
 )
 
 ament_package()

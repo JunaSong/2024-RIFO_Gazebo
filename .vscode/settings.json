@@ -11,7 +11,6 @@
         "cmath": "cpp",
         "complex": "cpp",
         "eigen": "cpp",
-<<<<<<< HEAD
         "iostream": "cpp",
         "cctype": "cpp",
         "clocale": "cpp",
@@ -80,9 +79,7 @@
         "variant": "cpp",
         "bit": "cpp",
         "*.ipp": "cpp"
-=======
         "iostream": "cpp"
->>>>>>> e6df6e06cd633df8e35fde197777b25f082e79fe
     },
     "cmake.configureOnOpen": true
 }
