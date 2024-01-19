@@ -11,7 +11,7 @@
 
   <!-- Link1 -->
   <gazebo reference="link1">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/Green</material>
   </gazebo>
 
   <!-- Link2 -->
@@ -19,7 +19,7 @@
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <material>Gazebo/Black</material>
-  </gazebo>
+  </gazebo>s
 
   <!-- Link3 -->
   <gazebo reference="link3">
