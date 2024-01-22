@@ -2,22 +2,26 @@
 
 ## Quick Start
 
-Gazebo:
+Launch Robot:
 
-    roslaunch rifo_gazebo gazebo.launch
+    ros2 launch ros2_control_demo_bringup rrbot.launch.py
 
-ROS Control:
+Run Control Node:
 
-    rosrun rifo_gazebo joint_control
+    ros2 run arm_control main
+
+Run Command Node:
+
+    ros2 run arm_control arm_command
 
 
 Example of Moving Joints:
 
-    rostopic pub /rrbot/joint2_position_controller/command std_msgs/Float64 "data: -0.9"
+    ros2 topic pub /forward_position_controller/commands std_msgs/msg/Float64MultiArray "data:
+    - 0.5
+    - 0.5
+    - 0.5"
 
 # References
 
-Gazebo ROS Demos
-
-* Author: Dave Coleman <davetcoleman@gmail.com>
-* License: GNU General Public License, version 3 (GPL-3.0)
+ROS2 Control Demos

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>arm_control</name>
+  <version>0.0.0</version>
+  <description>2024 Robotics Innovatory Freshman Orientation package</description>
+  <maintainer email="zcfilosvy522@gmail.com">Junha Song</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

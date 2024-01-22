@@ -1,17 +1,21 @@
 {
-    "python.autoComplete.extraPaths": [
-        "/home/junha/catkin_ws/devel/lib/python3/dist-packages",
-        "/opt/ros/noetic/lib/python3/dist-packages"
-    ],
-    "python.analysis.extraPaths": [
-        "/home/junha/catkin_ws/devel/lib/python3/dist-packages",
-        "/opt/ros/noetic/lib/python3/dist-packages"
-    ],
     "files.associations": {
+<<<<<<< HEAD
         "cmath": "cpp",
         "complex": "cpp",
         "eigen": "cpp",
         "iostream": "cpp"
     },
     "cmake.configureOnOpen": true
+=======
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "system_error": "cpp"
+    }
+>>>>>>> bd7f24a978aeb5da68ae645d6349f1eb335a78cf
 }
