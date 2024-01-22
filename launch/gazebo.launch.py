@@ -4,7 +4,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess, IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, Command, FindExecutable, PathJoinSubstitution
 
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -27,13 +27,11 @@ def generate_launch_description():
     # rviz_config = os.path.join(pkg_path, "rviz", rviz_file)
     world_path = os.path.join(pkg_path, "worlds", world_file_name)
 
-    # Start Gazebo server
+    # Start Gazebo server, client  
     start_gazebo_server_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')),
         launch_arguments={'world': world_path}.items()
     )
-
-    # Start Gazebo client    
     start_gazebo_client_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py'))
     )
@@ -63,21 +61,39 @@ def generate_launch_description():
         arguments=['-topic', 'robot_description', '-entity', 'skidbot'],
     )
 
+    robot_controllers = PathJoinSubstitution(
+        [
+            FindPackageShare("rifo_gazebo2"),
+            "config",
+            "rrbot_control2.yaml",
+        ]
+    )
+
+    control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_description, robot_controllers],
+        output={
+            "stdout": "screen",
+            "stderr": "screen",
+        },
+    )
+
+    robot_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner.py",
+        arguments=["forward_position_controller", "--controller-manager", "/controller_manager"],
+    )
   
     # create and return launch description object
     return LaunchDescription(
         [
-            # start gazebo, notice we are using libgazebo_ros_factory.so instead of libgazebo_ros_init.so
-            # That is because only libgazebo_ros_factory.so contains the service call to /spawn_entity
-            # ExecuteProcess(
-            #     cmd=["gazebo", "--verbose", world_path, "-s", "libgazebo_ros_factory.so"],
-            #     output="screen",
-            # ),
             start_gazebo_server_cmd,
             start_gazebo_client_cmd,
             robot_state_publisher_node,
             joint_state_publisher,
-            # tell gazebo to spwan your robot in the world by calling service
             spawn_entity,
+            control_node,
+            robot_controller_spawner,
         ]
     )

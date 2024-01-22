@@ -7,12 +7,13 @@
 <robot name="rrbot">
   <!-- Space btw top of beam and the each joint -->
   <!-- ros_control plugin -->
-  <gazebo>
+  <!-- <gazebo>
     <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
       <robotNamespace>/rrbot</robotNamespace>
       <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
     </plugin>
-  </gazebo>
+  </gazebo> -->
+
   <!-- Link1 -->
   <gazebo reference="link1">
     <material>Gazebo/Green</material>
@@ -23,8 +24,6 @@
     <mu2>0.2</mu2>
     <material>Gazebo/Black</material>
   </gazebo>
-  s
-
   
   <!-- Link3 -->
   <gazebo reference="link3">
@@ -291,8 +290,9 @@
       <inertia ixx="0.0002" ixy="0.0" ixz="0.0" iyy="0.0002" iyz="0.0" izz="0.0004"/>
     </inertial>
   </link>
+
   <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
-  <transmission name="tran1">
+  <!-- <transmission name="tran1">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint1">
       <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
@@ -321,6 +321,78 @@
       <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
-  </transmission>
-</robot>
+  </transmission> -->
 
+  <!--////////////////////////////////   plugin    ////////////////////////////////-->
+  <!-- <gazebo>
+    <plugin name="arm_plugin" filename="libarm_plugin.so">
+    </plugin>
+  </gazebo> -->
+
+  <!-- <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <robot_param>robot_description</robot_param>
+      <robot_param_node>robot_state_publisher</robot_param_node>
+      <parameters>$(find rifo_gazebo2)/config/rrbot_control2.yaml</parameters>
+      <controller_manager_name>simulation_controller_manager</controller_manager_name>
+    </plugin>
+  </gazebo> -->
+
+    <!-- <ros2_control name="RRBotSystemPositionOnly" type="system">
+    <hardware>
+      <plugin>ros2_control_demo_hardware/RRBotSystemPositionOnlyHardware</plugin>
+    </hardware>
+    <joint name="joint1">
+      <command_interface name="position">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="position"/>
+    </joint>
+    <joint name="joint2">
+      <command_interface name="position">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="position"/>
+    </joint>
+    <joint name="joint3">
+      <command_interface name="position">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="position"/>
+    </joint>
+  </ros2_control> -->
+
+  <gazebo>
+      <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+        <parameters>$(find rifo_gazebo2)/config/rrbot_control2.yaml</parameters>
+      </plugin>
+    </gazebo>
+
+  <ros2_control name="rrbot_ros2_control" type="system">
+      <hardware>
+        <plugin>ros2_control_demo_example_1/RRBotSystemPositionOnlyHardware</plugin>
+        <param name="example_param_hw_start_duration_sec">0</param>
+        <param name="example_param_hw_stop_duration_sec">3.0</param>
+        <param name="example_param_hw_slowdown">100</param>
+      </hardware>
+
+      <joint name="joint1">
+        <command_interface name="position">
+          <param name="min">-1</param>
+          <param name="max">1</param>
+        </command_interface>
+        <state_interface name="position"/>
+      </joint>
+      <joint name="joint2">
+        <command_interface name="position">
+          <param name="min">-1</param>
+          <param name="max">1</param>
+        </command_interface>
+        <state_interface name="position"/>
+      </joint>
+    </ros2_control>
+
+</robot>

@@ -14,9 +14,13 @@ public:
         joint2_pub = this->create_publisher<std_msgs::msg::Float64>("/rrbot/joint2_position_controller/command", 10);
         joint3_pub = this->create_publisher<std_msgs::msg::Float64>("/rrbot/joint3_position_controller/command", 10);
 
+        rrbot_joint_pub = this->create_publisher<std_msgs::msg::Float64MultiArray>("/forward_position_controller/commands", 10);
+
+        torque_pub = this->create_publisher<std_msgs::msg::Float32MultiArray>("/rrbot/Torque_sim", 10);
+
         // sub_joint_angle = this->create_subscription<sensor_msgs::msg::JointState>(
         //     "/rrbot/joint_states", 100, std::bind(&JointPublishingNode::msgCallbackP, this, std::placeholders::_1));
-
+        
         sub_joint_cmd = this->create_subscription<std_msgs::msg::Float32MultiArray>(
             "/rrbot/ArmCmd", 100, std::bind(&JointPublishingNode::msgCallbackArmCmd_sim, this, _1));
 
@@ -47,6 +51,8 @@ private:
         auto joint1_msg = std_msgs::msg::Float64();
         auto joint2_msg = std_msgs::msg::Float64();
         auto joint3_msg = std_msgs::msg::Float64();
+        auto rrbot_joint_msg = std_msgs::msg::Float64MultiArray();
+        auto torque_msg = std_msgs::msg::Float32MultiArray();
 
         Forward_K(th_act, T03);
 
@@ -77,12 +83,18 @@ private:
         }
 
         // PID_controller(TargetPos, th_act, TargetTor);
-        // torque_msg.data.clear();
-        // for (int i = 0; i < DoF; i++){
-        //     torque_msg.data.push_back(TargetTor[i]);
-        // }
+        torque_msg.data.clear();
+        for (int i = 0; i < DoF; i++){
+            torque_msg.data.push_back(TargetTor[i]);
+        }
+        torque_pub->publish(torque_msg);
 
-        // torque_pub.publish(torque_msg);
+        // rrbot
+        rrbot_joint_msg.data.clear();
+        for (int i = 0; i < 3; i++){
+            rrbot_joint_msg.data.push_back(TargetPos[i]);
+        }
+        rrbot_joint_pub->publish(rrbot_joint_msg);
 
         // if (first_callback == true)
         if(1)
@@ -105,6 +117,8 @@ private:
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr joint1_pub;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr joint2_pub;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr joint3_pub;
+    rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr rrbot_joint_pub;
+    rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr torque_pub;
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_joint_angle;
     rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr sub_joint_cmd;
 
@@ -116,7 +130,7 @@ int main(int argc, char * argv[])
     rclcpp::init(argc, argv);
     auto node1 = std::make_shared<JointPublishingNode>();
     // auto node2 = std::make_shared<JointCommandSubscriber>();  
-    // rclcpp::spin(node2);  
+    // rclcpp::spin(node2);
     rclcpp::spin(node1);
     rclcpp::shutdown();
     return 0;
