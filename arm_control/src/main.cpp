@@ -14,8 +14,8 @@ public:
 
         torque_pub = this->create_publisher<std_msgs::msg::Float32MultiArray>("/rrbot/Torque_sim", 10);
 
-        // sub_joint_angle = this->create_subscription<sensor_msgs::msg::JointState>(
-        //     "/rrbot/joint_states", 100, std::bind(&JointPublishingNode::msgCallbackP, this, std::placeholders::_1));
+        sub_joint_angle = this->create_subscription<sensor_msgs::msg::JointState>(
+            "/joint_states", 100, std::bind(&JointPublishingNode::msgCallbackP, this, _1));
         
         sub_joint_cmd = this->create_subscription<std_msgs::msg::Float32MultiArray>(
             "/rrbot/ArmCmd", 100, std::bind(&JointPublishingNode::msgCallbackArmCmd_sim, this, _1));
@@ -28,7 +28,7 @@ private:
     {
         for (int i = 0; i < DoF; i++)
         {
-            th_act[i] = msg->position[i];
+            CurrentPos[i] = msg->position[i];
         }
         first_callback = true;
     }
@@ -47,13 +47,14 @@ private:
         auto rrbot_joint_msg = std_msgs::msg::Float64MultiArray();
         // auto torque_msg = std_msgs::msg::Float32MultiArray();
 
-        Forward_K(th_act, T03);
+        Forward_K(CurrentPos, T03);
+        Forward_K(TargetPos, T03_Tar);
 
         if (traj_init == true) // set when cmd angle comes in, trajectory generated
         {
             for (int i = 0; i < DoF; i++)
             {
-                th_ini[i] = th_act[i];
+                th_ini[i] = CurrentPos[i];
             }
             Traj_joint(th_ini, th_sub, th_out);
             traj_cnt = 0;
@@ -75,7 +76,7 @@ private:
             }
         }
 
-        // PID_controller(TargetPos, th_act, TargetTor);
+        // PID_controller(TargetPos, CurrentPos, TargetTor);
         // torque_msg.data.clear();
         // for (int i = 0; i < DoF; i++){
         //     torque_msg.data.push_back(TargetTor[i]);
@@ -91,9 +92,12 @@ private:
             rrbot_joint_pub->publish(rrbot_joint_msg);
         }
 
+        cout << fixed;
         cout.precision(3);
-        cout << "Target Joint / Pose :" << TargetPos[0] * 180 / PI << setw(6) << TargetPos[1] * 180 / PI << setw(6) << TargetPos[2] * 180 / PI << "  /  ";
-        cout << T03(0, 3) << setw(6) << T03(1, 3) << setw(6) << T03(2, 3) << '\n';
+        cout << "Current Joint / Pose :" << CurrentPos[0] * 180 / PI << setw(8) << CurrentPos[1] * 180 / PI << setw(8) << CurrentPos[2] * 180 / PI << "  /  ";
+        cout << T03(0, 3) << setw(8) << T03(1, 3) << setw(8) << T03(2, 3) << '\n';
+        cout << "Target Joint  / Pose :" << TargetPos[0] * 180 / PI << setw(8) << TargetPos[1] * 180 / PI << setw(8) << TargetPos[2] * 180 / PI << "  /  ";
+        cout << T03_Tar(0, 3) << setw(8) << T03_Tar(1, 3) << setw(8) << T03_Tar(2, 3) << '\n' << '\n';
     }
 
     rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr rrbot_joint_pub;
@@ -107,10 +111,8 @@ private:
 int main(int argc, char * argv[])
 {
     rclcpp::init(argc, argv);
-    auto node1 = std::make_shared<JointPublishingNode>();
-    // auto node2 = std::make_shared<JointCommandSubscriber>();  
-    // rclcpp::spin(node2);
-    rclcpp::spin(node1);
+    auto node = std::make_shared<JointPublishingNode>();
+    rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;
 }

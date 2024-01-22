@@ -13,6 +13,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 # find_package(gazebo REQUIRED)
 
 include_directories(${GAZEBO_INCLUDE_DIRS})
@@ -30,7 +31,7 @@ add_executable(arm_command src/arm_command.cpp)
 ament_target_dependencies(arm_command rclcpp std_msgs)
 
 add_executable(main src/main.cpp)
-ament_target_dependencies(main rclcpp std_msgs)
+ament_target_dependencies(main rclcpp std_msgs sensor_msgs)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
