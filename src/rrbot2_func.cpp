@@ -135,7 +135,7 @@ void PIDController(double* targetpos_, double* currentpos_, double* currentvel_,
     double P_term[DoF] = {0,}; 
     double D_term[DoF] = {0,}; 
 	int torque_limit = 100;
-	Kp[0] = 200;
+	Kp[0] = 250;
 	Kp[1] = 180;
 	Kp[2] = 150;
 	Kd[0] = 15;
